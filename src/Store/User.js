@@ -3,6 +3,7 @@ import { decorate, observable, action } from "mobx";
 const url = "http://localhost:3001";
 
 export const request = async (api, method, body) => {
+  debugger;
   const res = await fetch(`${url}${api}`, {
     method: method,
     headers: {
@@ -26,7 +27,8 @@ export default class User extends Component {
   }
 
   signup = prop => {
-    const data = request("/signup", "POST", prop.body);
+    debugger;
+    const data = request("/signup", "POST", prop);
     if (data.sucess) {
       this.loggedin = true;
       this.loggedinuserid = data._id;
