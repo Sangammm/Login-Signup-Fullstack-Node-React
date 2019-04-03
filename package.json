@@ -1,9 +1,10 @@
 {
-  "name": "todo",
+  "name": "myinsta",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://127.0.0.1:3001",
   "dependencies": {
+    "bcrypt": "^3.0.5",
+    "cors": "^2.8.5",
     "jsonwebtoken": "^8.5.1",
     "mobx": "^5.9.4",
     "mobx-react": "^5.4.3",

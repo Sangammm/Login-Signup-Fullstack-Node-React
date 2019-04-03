@@ -10,9 +10,9 @@ const User_ = new User();
 
 ReactDOM.render(
   <Provider User={User_}>
-    <HashRouter>
+    <BrowserRouter>
       <App />
-    </HashRouter>
+    </BrowserRouter>
   </Provider>,
   document.getElementById("root")
 );

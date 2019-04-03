@@ -1,5 +1,21 @@
 import { Component } from "react";
 import { decorate, observable, action } from "mobx";
+const url = "http://localhost:3001";
+
+export const request = async (api, method, body) => {
+  const res = await fetch(`${url}${api}`, {
+    method: method,
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ body })
+  });
+  if (res.ok) {
+    const data = await res.json();
+    return data;
+  }
+};
 
 export default class User extends Component {
   constructor(props) {
@@ -10,43 +26,15 @@ export default class User extends Component {
   }
 
   signup = prop => {
-    console.log("into signup store");
-    const { email, password } = prop;
-    console.log("email=", email);
-    console.log("password=", password);
-    debugger;
-    fetch("/signup", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        email: email,
-        password: password
-      })
-    })
-      .then(res => {
-        debugger;
-        if (res.ok) {
-          return res.json();
-        } else {
-          console.log("error", res);
-        }
-      })
-      .then(data => {
-        console.log(data);
-
-        debugger;
-        if (data.sucess === true) {
-          this.loggedin = true;
-          this.loggedinuserid = data._id;
-          this.message = "signup sucesfull";
-        } else {
-          console.log("signupfailed");
-          this.message = "Signup failed";
-        }
-      });
+    const data = request("/signup", "POST", prop.body);
+    if (data.sucess) {
+      this.loggedin = true;
+      this.loggedinuserid = data._id;
+      this.message = "signup sucesfull";
+    } else {
+      console.log("signupfailed");
+      this.message = "Signup failed";
+    }
   };
 }
 decorate(User, {

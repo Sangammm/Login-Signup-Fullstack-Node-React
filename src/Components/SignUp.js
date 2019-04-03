@@ -4,7 +4,8 @@ import {
   FormControl,
   FormLabel,
   Form,
-  Alert
+  Alert,
+  Button
 } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import { observer, inject } from "mobx-react";
@@ -24,9 +25,17 @@ class Signup extends Component {
       User: { loggedin, signup }
     } = this.props;
     return !loggedin ? (
-      <div>
+      <div className="App">
         <h2>SignUp</h2>
-        <Form>
+        <Form
+          onSubmit={e => {
+            e.preventDefault();
+            this.props.User.signup({
+              email: this.state.email,
+              password: this.state.password
+            });
+          }}
+        >
           <FormGroup>
             <FormLabel>Email address</FormLabel>
             <FormControl
@@ -61,19 +70,7 @@ class Signup extends Component {
             />
           </FormGroup>
 
-          <button
-            variant="primary"
-            type="submit"
-            onClick={() =>
-              this.props.User.signup({
-                email: this.state.email,
-                password: this.state.password
-              })
-            }
-            value={this.state.cpassword}
-          >
-            SignUp
-          </button>
+          <Button type="submit">SignUp</Button>
         </Form>
 
         <Alert variant="secondary">
