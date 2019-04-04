@@ -3,7 +3,6 @@ import { decorate, observable, action } from "mobx";
 const url = "http://localhost:3001";
 
 export const request = async (api, method, body) => {
-  debugger;
   const res = await fetch(`${url}${api}`, {
     method: method,
     headers: {
@@ -30,12 +29,23 @@ export default class User extends Component {
     const data = request("/signup", "POST", prop).then(data => {
       if (data.sucess) {
         this.loggedin = true;
-        this.loggedinuserid = data._id;
-        this.message = "signup sucesfull";
-        console.log(this.message);
+        this.loggedinuserid = data;
+        this.message = null;
       } else {
-        console.log("signupfailed");
-        this.message = "Signup failed";
+        this.message = data.data;
+      }
+    });
+  };
+
+  login = prop => {
+    const data = request("/login", "POST", prop).then(data => {
+      if (data.sucess) {
+        this.loggedin = true;
+        this.loggedinuserid = data;
+        this.message = null;
+      } else {
+        this.message = data.data;
+        this.loggedinuserid = null;
       }
     });
   };

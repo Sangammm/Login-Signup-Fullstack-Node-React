@@ -31,16 +31,40 @@ app.post("/signup", async (req, res) => {
         data => {
           res.send({
             sucess: true,
-            data: data
+            data: data._id
           });
         },
         e => {
           console.log(e);
-          res.send({ sucess: false });
+          res.send({ sucess: false, data: e.errmsg });
         }
       );
     }
   });
+});
+
+app.post("/login", async (req, res) => {
+  // console.log("TCL: req", req.body);
+  const data = await User.findOne({ email: req.body.email });
+  // console.log("TCL: data", data);
+  if (data) {
+    await bcrypt.compare(req.body.password, data.password, (err, match) => {
+      if (err) {
+        console.log(err);
+      } else {
+        if (match) {
+          res.send({ data: data._id, sucess: true });
+        } else {
+          res.send({ data: "Wrong password", sucess: false });
+        }
+      }
+    });
+  } else {
+    res.send({
+      data: "email id is wrong",
+      sucess: false
+    });
+  }
 });
 
 app.listen(3001, () => {

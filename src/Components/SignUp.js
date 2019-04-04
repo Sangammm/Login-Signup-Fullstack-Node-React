@@ -20,11 +20,8 @@ class Signup extends Component {
     };
   }
   validate = () => {
-    console.log("inside validate");
     const cp = document.getElementById("confirm").value;
-    console.log(cp);
     if (this.state.password.length > 6 && this.state.password === cp) {
-      debugger;
       this.setState({ verified: 2 });
     } else {
       this.setState({ verified: 1 });
@@ -33,22 +30,26 @@ class Signup extends Component {
 
   render() {
     const {
-      User: { loggedin, signup }
+      User: { loggedin, signup, message }
     } = this.props;
+
     return !loggedin ? (
       <div className="App">
         <h2>SignUp</h2>
-        {this.state.verified === 0 ? (
+
+        {message ? (
+          <Alert variant="danger">Email id already Exists</Alert>
+        ) : this.state.verified === 0 ? (
           <p />
         ) : this.state.verified === 1 ? (
-          <Alert variant="danger">Confirm password doesn't match</Alert>
+          <Alert variant="danger">Confirm password not matching</Alert>
         ) : (
-          <Alert variant="success">Good to Go</Alert>
+          <Alert variant="success">Confirm password is matching</Alert>
         )}
         <Form
           onSubmit={e => {
             e.preventDefault();
-            this.props.User.signup({
+            signup({
               email: this.state.email,
               password: this.state.password
             });
