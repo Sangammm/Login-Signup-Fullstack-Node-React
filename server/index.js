@@ -18,13 +18,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 //post signup
 app.post("/signup", async (req, res) => {
-  console.log(req.body);
   await bcrypt.hash(req.body.password, 10, (err, hash) => {
     if (err) {
       console.log(err);
     } else {
       console.log(hash);
-      console.log(hash1);
       let user = new User({
         email: req.body.email,
         password: hash

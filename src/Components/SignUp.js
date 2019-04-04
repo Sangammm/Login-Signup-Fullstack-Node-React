@@ -16,9 +16,20 @@ class Signup extends Component {
     this.state = {
       email: "",
       password: "",
-      confirmpass: ""
+      verified: 0
     };
   }
+  validate = () => {
+    console.log("inside validate");
+    const cp = document.getElementById("confirm").value;
+    console.log(cp);
+    if (this.state.password.length > 6 && this.state.password === cp) {
+      debugger;
+      this.setState({ verified: 2 });
+    } else {
+      this.setState({ verified: 1 });
+    }
+  };
 
   render() {
     const {
@@ -27,6 +38,13 @@ class Signup extends Component {
     return !loggedin ? (
       <div className="App">
         <h2>SignUp</h2>
+        {this.state.verified === 0 ? (
+          <p />
+        ) : this.state.verified === 1 ? (
+          <Alert variant="danger">Confirm password doesn't match</Alert>
+        ) : (
+          <Alert variant="success">Good to Go</Alert>
+        )}
         <Form
           onSubmit={e => {
             e.preventDefault();
@@ -43,6 +61,7 @@ class Signup extends Component {
               placeholder="Enter email"
               onChange={e => this.setState({ email: e.target.value })}
               value={this.state.email}
+              required
             />
           </FormGroup>
 
@@ -54,6 +73,7 @@ class Signup extends Component {
               autoComplete="true"
               onChange={e => this.setState({ password: e.target.value })}
               value={this.state.password}
+              required
             />
           </FormGroup>
 
@@ -63,14 +83,18 @@ class Signup extends Component {
               type="password"
               placeholder="Confirm Password"
               autoComplete="true"
-              onChange={event =>
-                this.setState({ confirmpass: event.target.value })
-              }
-              value={this.state.confirmpass}
+              id="confirm"
+              onChange={this.validate}
+              required
             />
           </FormGroup>
 
-          <Button type="submit">SignUp</Button>
+          <Button
+            type="submit"
+            disabled={this.state.verified === 2 ? false : true}
+          >
+            SignUp
+          </Button>
         </Form>
 
         <Alert variant="secondary">

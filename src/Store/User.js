@@ -10,7 +10,7 @@ export const request = async (api, method, body) => {
       Accept: "application/json",
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ body })
+    body: JSON.stringify(body)
   });
   if (res.ok) {
     const data = await res.json();
@@ -27,16 +27,17 @@ export default class User extends Component {
   }
 
   signup = prop => {
-    debugger;
-    const data = request("/signup", "POST", prop);
-    if (data.sucess) {
-      this.loggedin = true;
-      this.loggedinuserid = data._id;
-      this.message = "signup sucesfull";
-    } else {
-      console.log("signupfailed");
-      this.message = "Signup failed";
-    }
+    const data = request("/signup", "POST", prop).then(data => {
+      if (data.sucess) {
+        this.loggedin = true;
+        this.loggedinuserid = data._id;
+        this.message = "signup sucesfull";
+        console.log(this.message);
+      } else {
+        console.log("signupfailed");
+        this.message = "Signup failed";
+      }
+    });
   };
 }
 decorate(User, {
