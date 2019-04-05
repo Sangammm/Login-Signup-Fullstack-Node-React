@@ -64,6 +64,10 @@ class Login extends Component {
           Not have an account?
           <Link to="/">SignUp</Link>
         </Alert>
+        <Alert variant="secondary">
+          Forgot Your Password
+          <Link to="/resetpassword">Forgot Password</Link>
+        </Alert>
       </div>
     );
   }

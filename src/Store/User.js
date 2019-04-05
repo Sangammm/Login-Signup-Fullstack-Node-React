@@ -26,7 +26,7 @@ export default class User extends Component {
   }
 
   signup = prop => {
-    const data = request("/signup", "POST", prop).then(data => {
+    request("/signup", "POST", prop).then(data => {
       if (data.sucess) {
         this.loggedin = true;
         this.loggedinuserid = data;
@@ -38,7 +38,7 @@ export default class User extends Component {
   };
 
   login = prop => {
-    const data = request("/login", "POST", prop).then(data => {
+    request("/login", "POST", prop).then(data => {
       if (data.sucess) {
         this.loggedin = true;
         this.loggedinuserid = data;

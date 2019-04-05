@@ -9,6 +9,26 @@ var User = mongoose.model("User", {
   password: {
     type: String,
     required: true
+  },
+  Etoken: {
+    type: String,
+    default: null,
+    required: false
+  },
+  verified: {
+    type: Boolean,
+    default: false,
+    required: false
+  },
+  Ptoken: {
+    type: String,
+    default: null,
+    required: false
+  },
+  tokenexpire: {
+    type: Number,
+    required: false,
+    default: null
   }
 });
 module.exports = {

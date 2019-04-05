@@ -36,7 +36,11 @@ class Signup extends Component {
     return !loggedin ? (
       <div className="App">
         <h2>SignUp</h2>
-
+        {this.state.password.length < 6 && this.state.password.length > 1 ? (
+          <Alert variant="danger">Password Length must be more than 6</Alert>
+        ) : (
+          ""
+        )}
         {message ? (
           <Alert variant="danger">Email id already Exists</Alert>
         ) : this.state.verified === 0 ? (
@@ -44,7 +48,7 @@ class Signup extends Component {
         ) : this.state.verified === 1 ? (
           <Alert variant="danger">Confirm password not matching</Alert>
         ) : (
-          <Alert variant="success">Confirm password is matching</Alert>
+          ""
         )}
         <Form
           onSubmit={e => {
@@ -104,7 +108,7 @@ class Signup extends Component {
         </Alert>
       </div>
     ) : (
-      <Redirect to="/home" />
+      <Redirect to="/login" />
     );
   }
 }
