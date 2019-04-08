@@ -13,6 +13,7 @@ export const request = async (api, method, body) => {
   });
   if (res.ok) {
     const data = await res.json();
+    console.log("TCL: data", data);
     return data;
   }
 };

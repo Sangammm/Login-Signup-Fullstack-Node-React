@@ -19,16 +19,6 @@ var User = mongoose.model("User", {
     type: Boolean,
     default: false,
     required: false
-  },
-  Ptoken: {
-    type: String,
-    default: null,
-    required: false
-  },
-  tokenexpire: {
-    type: Number,
-    required: false,
-    default: null
   }
 });
 module.exports = {

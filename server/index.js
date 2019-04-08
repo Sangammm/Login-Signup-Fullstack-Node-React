@@ -1,16 +1,18 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const { User } = require("./models/User");
+const { User } = require("./models/user");
+const { Ptoken } = require("./models/ptoken");
 var mongoose = require("mongoose");
 var cors = require("cors");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 
 //connection
-mongoose.connect("mongodb://localhost:27017/Myinsta");
+mongoose.connect("mongodb://localhost:27017/Myinsta", {
+  useNewUrlParser: true
+});
 mongoose.Promise = global.Promise;
-
-console.log(mongoose.connection.readyState);
+//console.log(mongoose.connection.readyState);
 
 const app = express();
 app.use(cors());
@@ -23,12 +25,10 @@ function makeid(length) {
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   for (var i = 0; i < length; i++)
     text += possible.charAt(Math.floor(Math.random() * possible.length));
-
   return text;
 }
 
-const sendmail = (email, random, body) => {
-  const link = `localhost:3001/verify/${random}`;
+const sendmail = (email, title, body) => {
   var transporter = nodemailer.createTransport({
     service: "Gmail",
     auth: {
@@ -39,18 +39,17 @@ const sendmail = (email, random, body) => {
   const mailOptions = {
     from: "sangamrajpara1998@gmail.com",
     to: email,
-    subject: "Verify kar le.",
+    subject: title,
     html: body
   };
   transporter.sendMail(mailOptions, function(err, info) {
     if (err) console.log(err);
-    else console.log(info);
   });
 };
 
-//post signup
 app.post("/signup", async (req, res) => {
   const random = makeid(20);
+  const link = `http://localhost:3001/verify/${random}`;
   await bcrypt.hash(req.body.password, 10, (err, hash) => {
     if (err) {
       console.log(err);
@@ -69,8 +68,8 @@ app.post("/signup", async (req, res) => {
           });
           sendmail(
             data.email,
-            random,
-            `<h2>Copy below link and paste in browser to verify</h2> <a href="${link}"> Click here </a> <br/>${link}`
+            "Login karna he to verify kr pehle",
+            `<h2>Copy below link and paste in browser to verify</h2> <a href="${link}">${link}</a>`
           );
         },
         e => {
@@ -83,6 +82,7 @@ app.post("/signup", async (req, res) => {
 });
 
 app.get("/verify/:id", async (req, res) => {
+  console.log("Verifying");
   var query = { Etoken: req.params.id };
   User.findOneAndUpdate(query, { $set: { verified: true } }, function(
     err,
@@ -94,7 +94,7 @@ app.get("/verify/:id", async (req, res) => {
     }
     {
       return res.send(
-        "Email Verifed sucessfully goto <a href='http://localhost:3000/login'>Login</a>"
+        "Email Verifed sucessfully <br><h2>goto <a href='http://localhost:3000/login'>Login</a></h2>"
       );
     }
   });
@@ -134,29 +134,116 @@ app.post("/login", async (req, res) => {
 });
 
 app.post("/sendresetpass", async (req, res) => {
-  const random = makeid(20);
-  const data = await User.findOne({ email: req.body.email });
+  debugger;
+  console.log(req.body);
+  const data = await User.find(req.body);
+  console.log(data);
+
   if (data) {
-    sendmail(data.email, random, `http://localhost:3000/ResetPass/${random}`);
-    User.findByIdAndUpdate(
-      data._id,
-      {
-        $set: { Ptoken: random, tokenexpire: new Date().now() + 100 * 60 * 10 }
-      },
-      function(err, doc) {
-        if (err) {
-          console.log(err);
-          return res.status(500).send("verification failed");
-        } else {
-          return res.send({
+    const random = await makeid(20);
+    const link = `http://localhost:3000/ResetPass/${random}`;
+    const body = `<h2><a href = "${link}">Reset Password</a><h2>`;
+    sendmail(data[0].email, "Age se yad rakhna Password", body);
+    const time = Date.now() + 600000;
+
+    const ptoken = new Ptoken({
+      _id: new mongoose.Types.ObjectId(),
+      userid: data[0]._id,
+      Ptoken: random,
+      tokenexpire: time,
+      count: 0
+    });
+
+    // Ptoken.updateOne({ userid: data[0].id }, ptoken, { upsert: true }, err => {
+    //   if (err) {
+    //     console.log("errorin update", err);
+    //     res.status(500).send({
+    //       sucess: false,
+    //       data: "Try Again Later"
+    //     });
+    //   } else {
+    //     res.send({
+    //       sucess: true,
+    //       data: "Click the link We sent you on your mail"
+    //     });
+    //   }
+    // });
+
+    const tdata = await Ptoken.find({ userid: data[0].id });
+    console.log(tdata);
+    if (tdata.length === 1) {
+      console.log("whyintdatatrue");
+      console.log(tdata[0]._id);
+
+      Ptoken.findOneAndUpdate(
+        { _id: tdata[0]._id },
+        {
+          $set: {
+            userid: data[0]._id,
+            Ptoken: random,
+            tokenexpire: time,
+            count: 0
+          }
+        },
+        { new: true },
+        (err, doc) => {
+          if (err) {
+            console.log("errorin update", err);
+            res.status(500).send({
+              sucess: false,
+              data: "Try Again Later"
+            });
+          } else {
+            console.log(doc);
+            res.send({
+              sucess: true,
+              data: "Click the link We sent you on your mail"
+            });
+          }
+        }
+      );
+    } else {
+      ptoken.save().then(
+        data => {
+          console.log(link);
+          res.status(200).send({
             sucess: true,
-            data: doc
+            data: "Click the link We sent you on your mail"
+          });
+        },
+        e => {
+          console.log("error=", e);
+          res.status(500).send({
+            sucess: false,
+            data: "Try Again Later"
           });
         }
-      }
-    );
+      );
+    }
   } else {
     res.send({ sucess: false, data: "Could not find that email id" });
+  }
+});
+
+app.post("/verify", async (req, res) => {
+  console.log(req.body);
+  const data = await ptoken.find(req.body);
+  if (data.count === 0) {
+    const time = Date.now();
+
+    if (time < data.tokenexpire) {
+      res.send({
+        sucess: false,
+        message: "Link is expired. Expiration time is 10 minutes"
+      });
+    } else {
+      res.send({
+        sucess: true,
+        message: null
+      });
+    }
+  } else {
+    res.send({ sucess: false, message: "You can use link only once" });
   }
 });
 

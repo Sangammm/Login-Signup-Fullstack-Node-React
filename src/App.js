@@ -5,6 +5,8 @@ import Signup from "./Components/SignUp";
 import Login from "./Components/Login";
 import Home from "./Components/Home";
 import SendPassword from "./Components/SendPass";
+import ResetPass from "./Components/ResetPass";
+import VerifyPassToken from "./Components/VerifyPassToken";
 class App extends Component {
   constructor(props) {
     super(props);
@@ -23,7 +25,8 @@ class App extends Component {
         <Route path="/login" component={Login} />
         <Route path="/home" component={Home} />
         <Route exact path="/resetpassword" component={SendPassword} />
-        {/* <Route path = "/resetpassword/:id" component={ResetPass} /> */}
+        <Route path="/ResetPass/:id" component={VerifyPassToken} />
+        <Route path="/ResetPass/sucess" component={ResetPass} />
       </Switch>
     );
   }

@@ -8,7 +8,6 @@ import {
   Form,
   Alert
 } from "react-bootstrap";
-import ResetStore from "../Store/ResetStore";
 class SendPassword extends Component {
   constructor(props) {
     super(props);
@@ -23,9 +22,11 @@ class SendPassword extends Component {
     return (
       <div className="App">
         {isemailsent ? (
-          <Alert variant="sucess">{message}</Alert>
+          <Alert variant="success">{message}</Alert>
+        ) : message ? (
+          <Alert variant="danger">{message}</Alert>
         ) : (
-          <Alert variant="danger">message</Alert>
+          ""
         )}
         <Form
           onSubmit={e => {
@@ -45,6 +46,9 @@ class SendPassword extends Component {
               required
             />
           </FormGroup>
+          <Button variant="primary" type="submit">
+            Send Reset Link
+          </Button>
         </Form>
       </div>
     );
