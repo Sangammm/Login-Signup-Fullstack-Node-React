@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { Provider } from "mobx-react";
-import { BrowserRouter, HashRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import User from "./Store/User";
 import ResetStore from "./Store/ResetStore";
 const User_ = new User();

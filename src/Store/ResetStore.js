@@ -2,7 +2,7 @@ import { Component } from "react";
 import { decorate, observable, action } from "mobx";
 import { request } from "./User";
 
-const url = "http://localhost:3001";
+//const url = "http://localhost:3001";
 export default class ResetStore extends Component {
   constructor(props) {
     super(props);
@@ -10,6 +10,7 @@ export default class ResetStore extends Component {
     this.isemailsent = false;
     this.message = null;
     this.sucess = false;
+    this.verifiedid = null;
   }
 
   sendpass = prop => {
@@ -33,9 +34,25 @@ export default class ResetStore extends Component {
       if (data.sucess) {
         this.isemailverified = 1;
         this.message = null;
+        this.verifiedid = data.message;
       } else {
         this.isemailverified = 2;
-        this.message = "Sorry there is some problem with link";
+        this.message = data.message;
+      }
+    });
+  };
+
+  changepass = prop => {
+    console.log("inchangepass");
+    request("/changepass", "POST", {
+      userid: this.verifiedid,
+      password: prop.password
+    }).then(data => {
+      if (data.sucess) {
+        this.sucess = true;
+      } else {
+        this.sucess = false;
+        this.message = "Error in password change try again";
       }
     });
   };

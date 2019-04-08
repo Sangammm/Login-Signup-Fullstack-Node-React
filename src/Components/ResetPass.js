@@ -29,15 +29,17 @@ class ResetPass extends Component {
       this.setState({ warning: "OK" });
     }
   };
+
   render() {
     const {
-      ResetStore: { message, isemailverified, checktoken }
+      ResetStore: { message, isemailverified, changepass, sucess }
     } = this.props;
-    const token = this.props.match.params.id;
 
     return (
       <div className="App">
-        {isemailverified ? (
+        {sucess ? (
+          <Redirect to="login" />
+        ) : isemailverified === 1 ? (
           <React.Fragment>
             <h2>Enter New Pasword</h2>
             {this.state.warning !== "OK" && this.state.warning ? (
@@ -45,9 +47,14 @@ class ResetPass extends Component {
             ) : (
               ""
             )}
+            {message ? <Alert variant="danger">{message}</Alert> : ""}
             <Form
-              onSubmit={e => {
+              onSubmit={async e => {
                 e.preventDefault();
+                this.validate();
+                if (this.state.warning === "OK") {
+                  changepass({ password: this.state.password });
+                }
               }}
             >
               <FormGroup>
@@ -55,8 +62,11 @@ class ResetPass extends Component {
                 <FormControl
                   type="password"
                   placeholder="Password"
+                  id="password"
                   autoComplete="true"
-                  onChange={e => this.setState({ password: e.target.value })}
+                  onChange={e => {
+                    this.setState({ password: e.target.value });
+                  }}
                   value={this.state.password}
                   required
                 />
@@ -76,14 +86,14 @@ class ResetPass extends Component {
 
               <Button
                 type="submit"
-                disabled={this.state.verified === "OK" ? false : true}
+                disabled={this.state.warning === "OK" ? false : true}
               >
-                SignUp
+                Set new password
               </Button>
             </Form>
           </React.Fragment>
         ) : (
-          <Redirect to="/SendPass" />
+          <Redirect to="/resetpassword" />
         )}
       </div>
     );

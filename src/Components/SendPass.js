@@ -21,6 +21,7 @@ class SendPassword extends Component {
     } = this.props;
     return (
       <div className="App">
+        <h2>Enter your email</h2>
         {isemailsent ? (
           <Alert variant="success">{message}</Alert>
         ) : message ? (

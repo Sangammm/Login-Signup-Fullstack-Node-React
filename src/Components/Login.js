@@ -19,7 +19,7 @@ class Login extends Component {
   }
   render() {
     const {
-      User: { loggedin, loggedinuserid, login, message }
+      User: { loggedin, login, message }
     } = this.props;
     return loggedin ? (
       <Redirect to="/home" />

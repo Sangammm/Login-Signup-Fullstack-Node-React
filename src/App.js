@@ -26,7 +26,7 @@ class App extends Component {
         <Route path="/home" component={Home} />
         <Route exact path="/resetpassword" component={SendPassword} />
         <Route path="/ResetPass/:id" component={VerifyPassToken} />
-        <Route path="/ResetPass/sucess" component={ResetPass} />
+        <Route path="/forgetpass" component={ResetPass} />
       </Switch>
     );
   }

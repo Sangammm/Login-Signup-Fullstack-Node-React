@@ -145,14 +145,8 @@ app.post("/sendresetpass", async (req, res) => {
     const body = `<h2><a href = "${link}">Reset Password</a><h2>`;
     sendmail(data[0].email, "Age se yad rakhna Password", body);
     const time = Date.now() + 600000;
-
-    const ptoken = new Ptoken({
-      _id: new mongoose.Types.ObjectId(),
-      userid: data[0]._id,
-      Ptoken: random,
-      tokenexpire: time,
-      count: 0
-    });
+    console.log(Date.now());
+    console.log(time);
 
     // Ptoken.updateOne({ userid: data[0].id }, ptoken, { upsert: true }, err => {
     //   if (err) {
@@ -175,13 +169,13 @@ app.post("/sendresetpass", async (req, res) => {
       console.log("whyintdatatrue");
       console.log(tdata[0]._id);
 
-      Ptoken.findOneAndUpdate(
+      await Ptoken.findOneAndUpdate(
         { _id: tdata[0]._id },
         {
           $set: {
             userid: data[0]._id,
             Ptoken: random,
-            tokenexpire: time,
+            tokenexpire: Date.now(),
             count: 0
           }
         },
@@ -191,18 +185,25 @@ app.post("/sendresetpass", async (req, res) => {
             console.log("errorin update", err);
             res.status(500).send({
               sucess: false,
-              data: "Try Again Later"
+              message: "Try Again Later"
             });
           } else {
             console.log(doc);
             res.send({
               sucess: true,
-              data: "Click the link We sent you on your mail"
+              message: "Click the link We sent you on your mail"
             });
           }
         }
       );
     } else {
+      const ptoken = new Ptoken({
+        _id: new mongoose.Types.ObjectId(),
+        userid: data[0]._id,
+        Ptoken: random,
+        tokenexpire: Date.now(),
+        count: 0
+      });
       ptoken.save().then(
         data => {
           console.log(link);
@@ -227,24 +228,58 @@ app.post("/sendresetpass", async (req, res) => {
 
 app.post("/verify", async (req, res) => {
   console.log(req.body);
-  const data = await ptoken.find(req.body);
+  const data = await Ptoken.findOne(req.body);
+  console.log(data);
+
   if (data.count === 0) {
     const time = Date.now();
-
-    if (time < data.tokenexpire) {
+    console.log(time);
+    console.log(time - data.tokenexpire);
+    if (time - data.tokenexpire > 600000) {
       res.send({
         sucess: false,
-        message: "Link is expired. Expiration time is 10 minutes"
+        message: "Link gets expired in 10 minutes"
       });
     } else {
       res.send({
         sucess: true,
-        message: null
+        message: data.userid
       });
     }
   } else {
     res.send({ sucess: false, message: "You can use link only once" });
   }
+});
+
+app.post("/changepass", async (req, res) => {
+  await bcrypt.hash(req.body.password, 10, (err, hash) => {
+    if (err) {
+      console.log(err);
+      res.send({
+        sucess: false,
+        message: "Error occured in encryption"
+      });
+    } else {
+      User.findByIdAndUpdate(
+        req.body.userid,
+        { $set: { password: hash } },
+        err => {
+          if (err) {
+            console.log("error in chngepass", err);
+            res.send({
+              sucess: false,
+              message: "Error occured"
+            });
+          } else {
+            res.send({
+              sucess: true,
+              message: "Password Changed Sucessfully"
+            });
+          }
+        }
+      );
+    }
+  });
 });
 
 app.listen(3001, () => {
