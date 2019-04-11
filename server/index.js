@@ -7,7 +7,6 @@ var cors = require("cors");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 
-//connection
 mongoose.connect("mongodb://localhost:27017/Myinsta", {
   useNewUrlParser: true
 });
@@ -134,10 +133,7 @@ app.post("/login", async (req, res) => {
 });
 
 app.post("/sendresetpass", async (req, res) => {
-  debugger;
-  console.log(req.body);
   const data = await User.find(req.body);
-  console.log(data);
 
   if (data) {
     const random = await makeid(20);
@@ -145,9 +141,6 @@ app.post("/sendresetpass", async (req, res) => {
     const body = `<h2><a href = "${link}">Reset Password</a><h2>`;
     sendmail(data[0].email, "Age se yad rakhna Password", body);
     const time = Date.now() + 600000;
-    console.log(Date.now());
-    console.log(time);
-
     // Ptoken.updateOne({ userid: data[0].id }, ptoken, { upsert: true }, err => {
     //   if (err) {
     //     console.log("errorin update", err);
@@ -164,11 +157,7 @@ app.post("/sendresetpass", async (req, res) => {
     // });
 
     const tdata = await Ptoken.find({ userid: data[0].id });
-    console.log(tdata);
     if (tdata.length === 1) {
-      console.log("whyintdatatrue");
-      console.log(tdata[0]._id);
-
       await Ptoken.findOneAndUpdate(
         { _id: tdata[0]._id },
         {
@@ -229,12 +218,11 @@ app.post("/sendresetpass", async (req, res) => {
 app.post("/verify", async (req, res) => {
   console.log(req.body);
   const data = await Ptoken.findOne(req.body);
-  console.log(data);
 
   if (data.count === 0) {
     const time = Date.now();
-    console.log(time);
-    console.log(time - data.tokenexpire);
+    // console.log(time);
+    // console.log(time - data.tokenexpire);
     if (time - data.tokenexpire > 600000) {
       res.send({
         sucess: false,
@@ -254,7 +242,7 @@ app.post("/verify", async (req, res) => {
 app.post("/changepass", async (req, res) => {
   await bcrypt.hash(req.body.password, 10, (err, hash) => {
     if (err) {
-      console.log(err);
+      console.log("encryption error", err);
       res.send({
         sucess: false,
         message: "Error occured in encryption"

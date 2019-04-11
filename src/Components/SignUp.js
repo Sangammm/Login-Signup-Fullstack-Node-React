@@ -44,7 +44,7 @@ class Signup extends Component {
         {message ? (
           <Alert variant="danger">Email id already Exists</Alert>
         ) : this.state.verified === 0 ? (
-          <p />
+          ""
         ) : this.state.verified === 1 ? (
           <Alert variant="danger">Confirm password not matching</Alert>
         ) : (
