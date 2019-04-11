@@ -4,9 +4,9 @@ import { Redirect } from "react-router-dom";
 class Home extends Component {
   render() {
     const {
-      User: { loggedin, loggedinuserid }
+      User: { loggedin }
     } = this.props;
-    return loggedinuserid && loggedin ? (
+    return loggedin ? (
       <div>
         <h1>Welcome</h1>
       </div>

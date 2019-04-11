@@ -13,7 +13,6 @@ export const request = async (api, method, body) => {
   });
   if (res.ok) {
     const data = await res.json();
-    console.log("TCL: data", data);
     return data;
   }
 };
@@ -40,9 +39,11 @@ export default class User extends Component {
 
   login = prop => {
     request("/login", "POST", prop).then(data => {
+      console.log(data);
+
       if (data.sucess) {
         this.loggedin = true;
-        this.loggedinuserid = data;
+        this.loggedinuserid = data.message;
         this.message = null;
       } else {
         this.message = data.data;

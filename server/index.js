@@ -1,12 +1,12 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const { User } = require("./models/user");
-const { Ptoken } = require("./models/ptoken");
 var mongoose = require("mongoose");
 var cors = require("cors");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 
+const { User } = require("./models/user");
+const { Ptoken } = require("./models/ptoken");
 mongoose.connect("mongodb://localhost:27017/Myinsta", {
   useNewUrlParser: true
 });
@@ -73,13 +73,12 @@ app.post("/signup", async (req, res) => {
         },
         e => {
           console.log(e);
-          res.send({ sucess: false, data: e.errmsg });
+          res.send({ sucess: false, data: "Email Id already exists" });
         }
       );
     }
   });
 });
-
 app.get("/verify/:id", async (req, res) => {
   console.log("Verifying");
   var query = { Etoken: req.params.id };
@@ -100,9 +99,9 @@ app.get("/verify/:id", async (req, res) => {
 });
 
 app.post("/login", async (req, res) => {
-  // console.log("TCL: req", req.body);
+  console.log("TCL: req", req.body);
   const data = await User.findOne({ email: req.body.email });
-  // console.log("TCL: data", data);
+  console.log("TCL: data", data);
   if (data) {
     if (data.verified === false) {
       res.send({
@@ -141,20 +140,6 @@ app.post("/sendresetpass", async (req, res) => {
     const body = `<h2><a href = "${link}">Reset Password</a><h2>`;
     sendmail(data[0].email, "Age se yad rakhna Password", body);
     const time = Date.now() + 600000;
-    // Ptoken.updateOne({ userid: data[0].id }, ptoken, { upsert: true }, err => {
-    //   if (err) {
-    //     console.log("errorin update", err);
-    //     res.status(500).send({
-    //       sucess: false,
-    //       data: "Try Again Later"
-    //     });
-    //   } else {
-    //     res.send({
-    //       sucess: true,
-    //       data: "Click the link We sent you on your mail"
-    //     });
-    //   }
-    // });
 
     const tdata = await Ptoken.find({ userid: data[0].id });
     if (tdata.length === 1) {

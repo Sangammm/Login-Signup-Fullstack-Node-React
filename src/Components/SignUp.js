@@ -16,15 +16,25 @@ class Signup extends Component {
     this.state = {
       email: "",
       password: "",
-      verified: 0
+      warning: ""
     };
   }
   validate = () => {
+    debugger;
     const cp = document.getElementById("confirm").value;
-    if (this.state.password.length > 6 && this.state.password === cp) {
-      this.setState({ verified: 2 });
+    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    if (this.state.email && !re.test(String(this.state.email).toLowerCase())) {
+      this.setState({ warning: "Email Id is wrong" });
+    } else if (
+      this.state.password.length < 7 &&
+      this.state.password.length > 0
+    ) {
+      this.setState({ warning: "Password must be more than 7 letters" });
+    } else if (this.state.password !== cp && cp.length > 0) {
+      this.setState({ warning: "Password and confirm password must be same" });
     } else {
-      this.setState({ verified: 1 });
+      this.setState({ warning: "OK" });
     }
   };
 
@@ -36,20 +46,12 @@ class Signup extends Component {
     return !loggedin ? (
       <div className="App">
         <h2>SignUp</h2>
-        {this.state.password.length < 6 && this.state.password.length > 1 ? (
-          <Alert variant="danger">Password Length must be more than 6</Alert>
+        {this.state.warning !== "OK" && this.state.warning ? (
+          <Alert variant="danger">{this.state.warning}</Alert>
         ) : (
           ""
         )}
-        {message ? (
-          <Alert variant="danger">Email id already Exists</Alert>
-        ) : this.state.verified === 0 ? (
-          ""
-        ) : this.state.verified === 1 ? (
-          <Alert variant="danger">Confirm password not matching</Alert>
-        ) : (
-          ""
-        )}
+        {message ? <Alert variant="danger">{message}</Alert> : ""}
         <Form
           onSubmit={e => {
             e.preventDefault();
@@ -64,7 +66,9 @@ class Signup extends Component {
             <FormControl
               type="email"
               placeholder="Enter email"
-              onChange={e => this.setState({ email: e.target.value })}
+              onChange={e =>
+                this.setState({ email: e.target.value }, () => this.validate())
+              }
               value={this.state.email}
               required
             />
@@ -76,7 +80,11 @@ class Signup extends Component {
               type="password"
               placeholder="Password"
               autoComplete="true"
-              onChange={e => this.setState({ password: e.target.value })}
+              onChange={e =>
+                this.setState({ password: e.target.value }, () =>
+                  this.validate()
+                )
+              }
               value={this.state.password}
               required
             />
@@ -96,7 +104,7 @@ class Signup extends Component {
 
           <Button
             type="submit"
-            disabled={this.state.verified === 2 ? false : true}
+            disabled={this.state.warning === "OK" ? false : true}
           >
             SignUp
           </Button>

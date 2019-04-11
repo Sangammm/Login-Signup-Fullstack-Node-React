@@ -21,7 +21,7 @@ class ResetPass extends Component {
 
   validate = () => {
     const cp = document.getElementById("confirm").value;
-    if (this.state.password.length > 6 && this.state.password > 0) {
+    if (this.state.password.length < 6 && this.state.password.length > 0) {
       this.setState({ warning: "Password must be more than 7 letters" });
     } else if (this.state.password !== cp && cp.length > 0) {
       this.setState({ warning: "Password and confirm password must be same" });
@@ -51,7 +51,6 @@ class ResetPass extends Component {
             <Form
               onSubmit={async e => {
                 e.preventDefault();
-                this.validate();
                 if (this.state.warning === "OK") {
                   changepass({ password: this.state.password });
                 }
@@ -65,7 +64,9 @@ class ResetPass extends Component {
                   id="password"
                   autoComplete="true"
                   onChange={e => {
-                    this.setState({ password: e.target.value });
+                    this.setState({ password: e.target.value }, () =>
+                      this.validate()
+                    );
                   }}
                   value={this.state.password}
                   required
