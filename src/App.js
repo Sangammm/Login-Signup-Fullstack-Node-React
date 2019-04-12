@@ -3,7 +3,7 @@ import "./App.css";
 import { Route, Switch } from "react-router-dom";
 import Signup from "./Components/SignUp";
 import Login from "./Components/Login";
-import Home from "./Components/Home";
+import Home from "./Components/home";
 import SendPassword from "./Components/SendPass";
 import ResetPass from "./Components/ResetPass";
 import VerifyPassToken from "./Components/VerifyPassToken";
