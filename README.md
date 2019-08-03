@@ -8,7 +8,7 @@ In the project directory, you can run:
 It will install all the required node modules.
 
 
-### `npm run start`
+### `npm run dev`
 It will start webapp at localhost:3000.<br>
 But You need to start mongodb server on Port in code at server/index.js file
 Add Password and email id to receive email id for verification! or forgotpassword at serer/index.js
