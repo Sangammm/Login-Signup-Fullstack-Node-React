@@ -4,6 +4,10 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
+### `npm i`
+It will install all the required node modules.
+
+
 ### `npm run start`
 It will start webapp at localhost:3000.<br>
 But You need to start mongodb server on Port in code at server/index.js file
