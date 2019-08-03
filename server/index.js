@@ -32,7 +32,7 @@ const sendmail = (email, title, body) => {
     service: "Gmail",
     auth: {
       user: "sangamrajpara1998@gmail.com",
-      pass: "ommetalcast"
+      pass: "password"
     }
   });
   const mailOptions = {
@@ -67,7 +67,7 @@ app.post("/signup", async (req, res) => {
           });
           sendmail(
             data.email,
-            "Login karna he to verify kr pehle",
+            "Verify Your Email Address",
             `<h2>Copy below link and paste in browser to verify</h2> <a href="${link}">${link}</a>`
           );
         },
