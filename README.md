@@ -6,7 +6,8 @@ In the project directory, you can run:
 
 ### `npm run start`
 It will start webapp at localhost:3000.<br>
-But You need to keep mongodb server on!
+But You need to start mongodb server on Port in code at server/index.js file
+Add Password and email id to receive email id for verification! or forgotpassword at serer/index.js
 
 ### `npm start`
 
