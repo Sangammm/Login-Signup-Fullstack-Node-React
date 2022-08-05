@@ -8,7 +8,7 @@
     "jsonwebtoken": "^8.5.1",
     "mobx": "^5.9.4",
     "mobx-react": "^5.4.3",
-    "mongoose": "^5.4.20",
+    "mongoose": "^5.7.5",
     "nodemailer": "^6.0.0",
     "react": "^16.8.6",
     "react-bootstrap": "^1.0.0-beta.6",
